@@ -9,6 +9,6 @@ def read_file(path: str = "input.txt"):
             return lines
 
 
-def read_file_n(n: int):
-    path = f"inputs/{n}"
+def read_file_n(n: int, folder: str = "inputs"):
+    path = f"{folder}/{n}"
     return read_file(path)
