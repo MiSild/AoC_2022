@@ -2,12 +2,15 @@ from common_aoc import read_file_n
 
 signal = read_file_n(6)[0]
 
-for i in range(4, len(signal)):
-    if len(set(signal[i-4:i])) == 4:
-        print(i)
-        break
+PACKET_START_WIDTH = 4
+MESSAGE_START_WIDTH = 14
 
-for i in range(14, len(signal)):
-    if len(set(signal[i-14:i])) == 14:
-        print(i)
-        break
+
+def find_start_of_x(width: int) -> int:
+    for i in range(width, len(signal)):
+        if len(set(signal[i-width:i])) == width:
+            return i
+
+
+print(find_start_of_x(PACKET_START_WIDTH))
+print(find_start_of_x(MESSAGE_START_WIDTH))
