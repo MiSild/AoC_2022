@@ -48,6 +48,25 @@ class Monkey:
             self.inspections += 1
 
 
+class MonkeyBusiness:
+    def __init__(self, monkeys: List["Monkey"]):
+        self.monkeys = monkeys
+
+    def do_business(self, times: int, reducer=None):
+        for i in range(times):
+            for monkey in self.monkeys:
+                monkey.take_turn(reducer)
+        return self.get_monkey_business_level()
+
+    def get_monkey_business_level(self):
+        inspections = []
+        for monkey in self.monkeys:
+            inspections.append(monkey.inspections)
+
+        inspections.sort()
+        return inspections[-1] * inspections[-2]
+
+
 monkeys = []
 divisors = []
 for i in range(int((len(monkey_input) + 1) / 7)):
@@ -62,27 +81,10 @@ for i in range(int((len(monkey_input) + 1) / 7)):
 
 for monkey in monkeys:
     monkey.set_monkeys(monkeys)
-part2_monkeys = deepcopy(monkeys)
+business_p1 = MonkeyBusiness(monkeys)
+business_p2 = deepcopy(business_p1)
 reducer = lcm(*divisors)
 
-for i in range(20):
-    for monkey in monkeys:
-        monkey.take_turn()
+print(business_p1.do_business(20))
+print(business_p2.do_business(10000, reducer))
 
-inspections = []
-for monkey in monkeys:
-    inspections.append(monkey.inspections)
-
-inspections.sort()
-print(inspections[-1] * inspections[-2])
-
-for i in range(10000):
-    for monkey in part2_monkeys:
-        monkey.take_turn(reducer)
-
-inspections = []
-for monkey in part2_monkeys:
-    inspections.append(monkey.inspections)
-
-inspections.sort()
-print(inspections[-1] * inspections[-2])
