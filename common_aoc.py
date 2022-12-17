@@ -1,7 +1,10 @@
-def read_file(path: str = "input.txt"):
+def read_file(path: str = "input.txt", flag_raw=False):
     with open(path, 'r') as f:
         lines = f.readlines()
-        lines = [line.rstrip("\n").split(",") for line in lines]
+        if flag_raw:
+            lines = [line.rstrip("\n") for line in lines]
+        else:
+            lines = [line.rstrip("\n").split(",") for line in lines]
 
         if len(lines) == 1:
             return lines[0]
@@ -9,6 +12,7 @@ def read_file(path: str = "input.txt"):
             return lines
 
 
-def read_file_n(n, folder: str = "inputs"):
+def read_file_n(n, folder: str = "inputs", flag_raw=False):
     path = f"{folder}/{n}"
-    return read_file(path)
+    return read_file(path, flag_raw)
+
