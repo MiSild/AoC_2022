@@ -44,14 +44,10 @@ def follow_air_pocket(cube, air_cubes):
         for t in [x for x in touchings if f"{x[0]}:{x[1]}:{x[2]}" not in air_cubes]:
             air_cubes.add(f"{t[0]}:{t[1]}:{t[2]}")
             new_air = follow_air_pocket(t, air_cubes)
-            if new_air == []:
-                return []
-            else:
-                for i in new_air:
-                    air_cubes.add(i)
-        return air_cubes
+            if new_air == set():
+                return set()
     else:
-        return []
+        return set()
 
 
 checked = []
@@ -59,7 +55,9 @@ for blocked_cube, blocked_sides in trapped.items():
     if blocked_cube not in checked:
         cube = [int(x) for x in blocked_cube.split(":")]
         air_cubes = set([blocked_cube])
-        air_cubes = follow_air_pocket(cube, air_cubes)
+        air = follow_air_pocket(cube, air_cubes)
+        if air == set():
+            continue
         if len(air_cubes) > 0:
             print(air_cubes)
         for air_cube in air_cubes:
