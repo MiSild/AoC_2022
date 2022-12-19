@@ -85,7 +85,7 @@ while len(heap) > 0:
     pwr, current_positions, opened_valves, minutes_left, time_to_destinations, opening_orders = heapq.heappop(heap)
     if pwr < pressure:
         pressure = pwr
-        # print(f"Pressure: {pwr}, times: {time_to_destinations}, final_pos: {current_positions}, opened: {opened_valves}, opening_order:{opening_orders}")
+        print(f"Pressure: {pwr}, times: {time_to_destinations}, final_pos: {current_positions}, opened: {opened_valves}, opening_order:{opening_orders}")
     if pwr - upper_bound_pressure_potential(minutes_left, rated_valves - opened_valves) > pressure:  # This upper bound holds as it was for simultaneous opening of all remaining valves
         continue
     person_pos, elephant_pos = current_positions
