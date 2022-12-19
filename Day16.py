@@ -5,9 +5,6 @@ from scipy.sparse.csgraph import floyd_warshall
 valves = read_file_n(16, 'inputs', True)
 valves = {valve.split("Valve ")[1][:2]: [int(valve.split("rate=")[-1].split(";")[0]), valve.split("valves ")[-1].split(', ')] for valve in valves}
 
-# What describes a path is the valves traveled + pressure that will be released without further action (pwr) + minutes left
-# The same sorted path is better if it has the same pressure but more minutes left or same minutes but more pwr
-# (-pwr, path, minutes)
 # AADDCCBBAAIIJJIIAADDEEFFGGHHGGFFEEDDCC, 1651, DDBBJJHHEECC
 minutes = 30
 heap = []
@@ -15,12 +12,10 @@ heap = []
 rated_valves = set()
 valve_to_index = {}
 index_to_valve = {}
-paths = {}
 index = 0
 for key, valve in valves.items():
     valve_to_index[key] = index
     index_to_valve[index] = key
-    paths[key] = {key: ""}
     index += 1
     if valve[0] > 0:
         rated_valves.add(key)
@@ -42,7 +37,7 @@ def upper_bound_pressure_potential(time_left, unopened_valves):
     return pressure_potential
 
 
-# -Pressure-to-be-released, current position, opened valves, time_left
+# -Pressure-to-be-released, current position, opened valves, time_left, opening order
 heapq.heappush(heap, (0, "AA", set(), 30, ""))
 pressure = 0
 while len(heap) > 0:
@@ -58,7 +53,7 @@ while len(heap) > 0:
             destination_rate, _ = valves[unopened_rated_valve]
             new_open_valves = set(opened_valves)
             new_open_valves.add(unopened_rated_valve)
-            heapq.heappush(heap, (pwr - (destination_rate * post_opening_time), unopened_rated_valve, new_open_valves, post_opening_time, opening_order+unopened_rated_valve))
+            heapq.heappush(heap, (pwr - (destination_rate * post_opening_time), unopened_rated_valve, new_open_valves, post_opening_time, opening_order + unopened_rated_valve))
 
 print(pressure * -1)
 
