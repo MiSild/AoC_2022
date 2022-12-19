@@ -86,7 +86,7 @@ while len(heap) > 0:
     if pwr < pressure:
         pressure = pwr
         # print(f"Pressure: {pwr}, times: {time_to_destinations}, final_pos: {current_positions}, opened: {opened_valves}, opening_order:{opening_orders}")
-    if pwr - upper_bound_pressure_potential(minutes_left, rated_valves - opened_valves) * 2 > pressure:  # IDK how much better an elephant makes it but 50 times seems enough to have it hold true
+    if pwr - upper_bound_pressure_potential(minutes_left, rated_valves - opened_valves) > pressure:  # This upper bound holds as it was for simultaneous opening of all remaining valves
         continue
     person_pos, elephant_pos = current_positions
     person_des, elephant_des = time_to_destinations
