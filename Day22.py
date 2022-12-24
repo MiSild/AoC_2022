@@ -87,7 +87,7 @@ switch_90 = {
     'N': {True: 'E', False: 'W'},
     'S': {True: 'W', False: 'E'},
     'E': {True: 'N', False: 'S'},
-    'W': {True: 'E', False: 'N'}
+    'W': {True: 'S', False: 'N'}
 }
 
 switch = {
@@ -120,7 +120,7 @@ class Face:
         for face_index, flag_reverse_order, flag_reverse_index, sub_xy in self.row_orientations[xy]:
             cube_row += self.faces[face_index - 1].get_row(sub_xy, index, flag_reverse_order, flag_reverse_index)
             face_indexes.append(face_index)
-        return cube_row, index, face_indexes
+        return cube_row, face_indexes
 
     def walk_on_cube(self, x_index, y_index, orientation, no_steps):
         flag_reverse = False
@@ -128,18 +128,18 @@ class Face:
             flag_reverse = True
         xy = 'x' if orientation in 'NS' else 'y'
         stat_index, mov_index = [x_index, y_index] if xy == 'x' else [y_index, x_index]
-        cube_row, index, face_indexes = self.get_cube_row(xy, stat_index)
+        cube_row, face_indexes = self.get_cube_row(xy, stat_index)
         if orientation in 'NW':
             cube_row = cube_row[::-1]
-            index = 199 - index
+            mov_index = 199 - mov_index
             face_indexes = face_indexes[::-1]
-        new_index = walk_on_path(index, no_steps, cube_row, 1)
+        new_index = walk_on_path(mov_index, no_steps, cube_row, 1)
         face_index = face_indexes[new_index // 50]
         new_index = new_index % 50
         _, flag_ro, flag_ri, target_axis = [row_orientation for row_orientation in self.row_orientations[xy] if row_orientation[0] == face_index][0]
         new_state = {}
         new_state[target_axis] = 49 - stat_index if flag_ri else stat_index
-        new_state[swap_axis[target_axis]] = new_index if flag_reverse + flag_ro % 2 == 0 else 49 - new_index
+        new_state[swap_axis[target_axis]] = new_index if (flag_reverse + flag_ro) % 2 == 0 else 49 - new_index
         new_orientation = switch[orientation][flag_ro] if target_axis == xy else switch_90[orientation][flag_ro]
         return new_state, face_index, new_orientation
 
@@ -164,7 +164,7 @@ faces[0].row_orientations = {'x': [[1, False, False, 'x'], [3, False, False, 'x'
                                    [4, True, True, 'y'], [5, True, True, 'y']]}
 faces[1].row_orientations = {'x': [[2, False, False, 'x'], [3, True, False, 'y'], [5, False, False, 'x'], [6, False, False, 'x']],
                              'y': [[2, False, False, 'y'], [4, True, True, 'y'],
-                                   [5, True, True, 'y'], [1, False, False, 'x']]}
+                                   [5, True, True, 'y'], [1, False, False, 'y']]}
 faces[2].row_orientations = {'x': [[3, False, False, 'x'], [4, False, False, 'x'], [6, True, False, 'y'], [1, False, False, 'x']],
                              'y': [[3, False, False, 'y'], [2, True, False, 'x'],
                                    [6, True, False, 'x'], [5, True, False, 'x']]}
@@ -180,7 +180,7 @@ faces[5].row_orientations = {'x': [[6, False, False, 'x'], [2, False, False, 'x'
 facing = 'E'
 x, y = [0, 0]
 face = 1
-#         return new_state, face_index, new_orientation
+
 for instruction in directions:
     if type(instruction) == int:
         new_state, face, facing = faces[face - 1].walk_on_cube(x, y, facing, instruction)
@@ -188,4 +188,6 @@ for instruction in directions:
         y = new_state['y']
     else:
         facing = turns[instruction][facing]
+        # print(f"We are on face:{face} at {x}:{y}, facing: {facing}")
 
+print((faces[face - 1].y_2d_offset + y + 1) * 1000 + 4 * (faces[face - 1].x_2d_offset + x + 1) + facing_to_value[facing])
